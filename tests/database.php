@@ -8,5 +8,5 @@ $stmt = $pdo->prepare('SELECT ? AS value');
 $value = "Isioma & Ayo — Ọrẹ́ '; DROP TABLE schema_migrations; --";
 $stmt->execute([$value]);
 check($stmt->fetchColumn() === $value, 'UTF-8 and SQL metacharacters remain literal');
-check((int)$pdo->query('SELECT COUNT(*) FROM schema_migrations')->fetchColumn() === 1, 'Exactly one migration recorded');
-check($pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN) === ['schema_migrations'], 'Only essential foundation ledger exists');
+check((int)$pdo->query('SELECT COUNT(*) FROM schema_migrations')->fetchColumn() === 2, 'Exactly two migrations recorded');
+check($pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN) === ['admin_settings', 'administrators', 'audit_log', 'auth_rate_limits', 'schema_migrations', 'system_state'], 'Only Milestone 1 and 2 tables exist');

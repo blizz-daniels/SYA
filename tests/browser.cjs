@@ -18,7 +18,7 @@ const fs=require('node:fs');
    assert.equal(await page.locator('form').count(),0);
    if(route==='home'){assert(await page.locator('h1').evaluate(e=>e.scrollWidth<=e.parentElement.clientWidth));assert.equal(await page.locator('.hero-content').evaluate(e=>getComputedStyle(e).animationName),'none');}
    assert(await page.locator('body').innerText().then(t=>!(/Warning:|Fatal error:|Notice:/.test(t))));
-   for(const img of await page.locator('img').all()){await img.scrollIntoViewIfNeeded();assert(await img.evaluate(i=>i.complete&&i.naturalWidth>0));assert(await img.getAttribute('alt'))}
+   for(const img of await page.locator('img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(i=>i.decode());assert(await img.evaluate(i=>i.complete&&i.naturalWidth>0));assert(await img.getAttribute('alt'))}
    await page.screenshot({path:`tests/artifacts/${route}-${width}.png`,fullPage:true});
    if(process.env.AXE==='1'){
     const AxeBuilder=require('@axe-core/playwright').default;

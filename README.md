@@ -1,10 +1,14 @@
-# See You Around — Milestone 1
+# See You Around — Milestones 1 and 2
 
-Lightweight PHP public website. Only Milestone 1 is implemented. No administrator, recruitment, CMS, newsletter or contact submission backend exists. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
+Lightweight PHP public website. Milestones 1 and 2 are implemented: the public website and a secure production-office portal. Recruitment, CMS, newsletter and contact-submission backends remain unavailable. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
 
 ## Requirements
 
 PHP 8.2+ (tested: 8.4.27), PDO and pdo_mysql; MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+
+## Production office setup
+
+**Using a phone? Follow [Milestone 2 setup instructions](docs/milestone-2-setup.md)** for the SQL import, private configuration, one-time setup and login. Uploading files alone does not create an administrator or configure your database. The setup file ships inactive.
 
 ## Get the files
 
@@ -60,11 +64,11 @@ php bin/migrate.php
 php tests/database.php
 ```
 
-First execution applies `001_foundation.sql`; subsequent executions skip it after checking its checksum. The only table is `schema_migrations`. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects a disposable Milestone 1 database with exactly one table.
+First execution applies `001_foundation.sql`; subsequent executions skip it after checking its checksum. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the six-table Milestone 2 schema and two migration records.
 
 ## Configuration
 
-`config/config.php` is the central configuration, outside the web root and ignored by Git. The safe example provides defaults for public rendering only. `base_url` is empty for a root installation; for a subdirectory use e.g. `/film` (without a trailing slash). No host header is used to build links. Future feature flags and session/email/storage settings are reserved configuration, not operational services. Keep debug off in production; configure PHP `display_errors=Off` and protected error logging at the server level. No production credentials are provided. Do not change feature flags to imply unimplemented functionality exists.
+`config/config.php` is the central configuration, outside the web root and ignored by Git. The safe example provides defaults for public rendering only. `base_url` is empty for a root installation; for a subdirectory use e.g. `/film` (without a trailing slash). No host header is used to build links. Recruitment/email/storage feature settings remain reserved. Session settings are enforced by the administrator portal. Keep debug off in production; configure PHP `display_errors=Off` and protected error logging at the server level. No production credentials are provided. Do not change feature flags to imply unimplemented functionality exists.
 
 ## Structure
 
@@ -86,7 +90,7 @@ For browser verification, install development-only packages in a separate tempor
 
 Additional checks can be run with `node tests/extra.cjs` using the same development environment.
 
-See [actual results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
+See [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
 ## Phone upload to InfinityFree
 
@@ -103,4 +107,4 @@ This whole-project layout was tested with local Apache 2.4, not an InfinityFree 
 
 On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
 
-No deployment has been performed. No personal data is collected. No external requests, cookies, sessions, videos, tracking scripts or social widgets are initiated by this application. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 2–7 require separate explicit authorization.
+No deployment has been performed. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 3–7 require separate explicit authorization.

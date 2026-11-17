@@ -3,3 +3,8 @@ DirectoryIndex index.php
 <FilesMatch "^\.">
  Require all denied
 </FilesMatch>
+
+# Setup templates and editor/backup copies must never be downloaded.
+<FilesMatch "(?i)\.(dist|bak|old|orig|sql|log|ini|env|swp|zip|gz|~)$">
+ Require all denied
+</FilesMatch>

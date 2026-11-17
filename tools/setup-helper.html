@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>See You Around — Offline setup helper</title><style>body{max-width:720px;margin:40px auto;padding:24px;background:#15121d;color:#f5f1ec;font:16px/1.7 system-ui}h1{font:40px Georgia,serif}label{display:block;margin-top:24px}textarea{box-sizing:border-box;width:100%;padding:14px;background:#241e2c;color:#f5f1ec;border:1px solid #d5c5b7;font:14px/1.6 monospace;overflow-wrap:anywhere}button{padding:15px 22px;font:inherit;background:#d5c5b7;color:#15121d;border:0;cursor:pointer}button:focus-visible,textarea:focus-visible{outline:3px solid #b87b60;outline-offset:4px}small{color:#d5c5b7}</style></head><body><h1>A secure beginning.</h1><p>Open this file locally from the downloaded ZIP. It uses your browser’s cryptographic random generator. It sends nothing over the network, uses no libraries, and saves nothing in browser storage.</p><p>Save the generated values privately in a password manager before configuring the website. Never paste secrets into public messages or commit them to GitHub.</p><button type="button" id="generate">Generate new setup values</button><p id="status" role="status"></p><div id="values" hidden><label for="app_key">Application key → config.php security.app_key</label><textarea spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" id="app_key" rows="2" readonly></textarea><label for="token_hash">Setup token hash → config.php security.setup_token_hash</label><textarea spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" id="token_hash" rows="2" readonly></textarea><label for="token">One-time token → enter on the setup form</label><textarea spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" id="token" rows="2" readonly></textarea><label for="code">Suggested Super Admin private code → setup form and password manager</label><textarea spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" id="code" rows="2" readonly></textarea><p><small>Do not regenerate after copying only some values: the token and token hash must come from the same generation. Keep the application key stable after installation. After setup, delete public/setup.php and clear setup_token_hash from config.php.</small></p></div><script>
+'use strict';
+const hex=bytes=>Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+document.querySelector('#generate').addEventListener('click',async()=>{
+ try{
+  if(!globalThis.crypto?.subtle)throw new Error('This browser does not provide Web Crypto for local files. Use the CLI instructions or a browser that supports it.');
+  const token=hex(crypto.getRandomValues(new Uint8Array(32)));
+  const key=hex(crypto.getRandomValues(new Uint8Array(32)));
+  const hash=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))));
+  const code='Sya-'+btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  for(const [id,value]of Object.entries({app_key:key,token_hash:hash,token,code}))document.getElementById(id).value=value;
+  document.querySelector('#values').hidden=false;
+  document.querySelector('#status').textContent='Values generated locally. Select each field to copy it.';
+ }catch(error){document.querySelector('#status').textContent=error.message;}
+});
+</script></body></html>

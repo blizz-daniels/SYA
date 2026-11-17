@@ -3,3 +3,4 @@
 *.log
 .env
 /tests/artifacts/
+/public/setup.php
