@@ -1,10 +1,14 @@
-# See You Around — Milestones 1–3
+# See You Around — Milestones 1–4
 
-Lightweight PHP public website. Milestones 1–3 are implemented: the public website, production-office security, and casting/crew recruitment. Recruitment ships closed pending privacy, private-storage and Resend delivery checks. CMS, auditions, newsletters and the contact inbox remain later milestones. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
+Lightweight PHP public website. Milestones 1–4 are implemented: the public website, production-office security, casting/crew recruitment, and auditions/evaluations. Recruitment ships closed pending privacy, private-storage and Resend delivery checks. CMS, newsletters and the contact inbox remain later milestones. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
 
 ## Requirements
 
 PHP 8.2+ (tested: 8.4.27), PDO and pdo_mysql, native sessions, Fileinfo for attachments, and OpenSSL/HTTPS transport (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+
+## Auditions and evaluations upgrade (Milestone 4)
+
+Use [the Milestone 4 phone upgrade guide](docs/milestone-4-setup.md). Back up, import `database/upgrade-milestone-4.sql` into the existing Milestone 3 database, and preserve your live private configuration/application key/storage while replacing application files. Reuse the existing Resend settings and configure the complete HTTPS base URL. Invitations and update/cancellation notices require individual staff sends; there is no background worker. Real recruitment remains closed pending the owner’s Nigerian privacy review. See [actual Milestone 4 results](docs/milestone-4-report.md).
 
 ## Recruitment upgrade (Milestone 3)
 
@@ -68,11 +72,11 @@ php bin/migrate.php
 php tests/database.php
 ```
 
-First execution applies `001_foundation.sql`; subsequent executions skip it after checking its checksum. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the fourteen-table Milestone 3 schema and three migration records.
+First execution applies `001_foundation.sql`; subsequent executions skip it after checking its checksum. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the 23-table Milestone 4 schema and four migration records.
 
 ## Configuration
 
-`config/config.php` is the central configuration, outside the web root and ignored by Git. The safe example provides defaults for public rendering only. `base_url` is empty for a root installation; for a subdirectory use e.g. `/film` (without a trailing slash). No host header is used to build links. Recruitment/email/storage feature settings remain reserved. Session settings are enforced by the administrator portal. Keep debug off in production; configure PHP `display_errors=Off` and protected error logging at the server level. No production credentials are provided. Keep the application key stable: recruitment email hashes and verification-code hashes depend on it. Do not change feature flags to imply unimplemented functionality exists.
+`config/config.php` is the central configuration, outside the web root and ignored by Git. The safe example provides defaults for public rendering only. `base_url` is empty for a root installation; for a subdirectory use e.g. `/film` (without a trailing slash). No host header is used to build links. Recruitment/email/storage settings are documented in the milestone setup guides. Audition email requires a complete HTTPS base URL, e.g. `https://seeyoulater.freedev.app/public`, rather than an empty or relative value. Session settings are enforced by the administrator portal. Keep debug off in production; configure PHP `display_errors=Off` and protected error logging at the server level. No production credentials are provided. Keep the application key stable: recruitment email hashes and verification-code hashes depend on it. Do not change feature flags to imply unimplemented functionality exists.
 
 ## Structure
 
@@ -94,7 +98,7 @@ For browser verification, install development-only packages in a separate tempor
 
 Additional checks can be run with `node tests/extra.cjs` using the same development environment.
 
-See [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
+See [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
 ## Phone upload to InfinityFree
 
@@ -111,4 +115,4 @@ This whole-project layout was tested with local Apache 2.4, not an InfinityFree 
 
 On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
 
-No deployment has been performed. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 4–7 require separate explicit authorization.
+No deployment has been performed. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 5–7 require separate explicit authorization.

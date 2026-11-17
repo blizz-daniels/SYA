@@ -14,5 +14,5 @@
 <main id="main" class="admin-main"><p class="eyebrow">SEE YOU AROUND / <?= e(strtoupper(ADMIN_ROLES[$user['role']])) ?></p><h1><?= e($title) ?><span class="title-dot">.</span></h1>
 <?php if ($error): ?><p class="alert" role="alert"><?= e($error) ?></p><?php endif; ?>
 <?php if ($flash): ?><div class="success" role="status"><ul><?php foreach ($flash as $message): ?><li><?= e($message) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
-<?php require __DIR__ . '/admin-pages.php'; ?></main></div>
+<?php if(!empty($productionView)){require __DIR__.'/production.php';}else{require __DIR__.'/admin-pages.php';} ?></main></div>
 <?php endif; ?><footer class="admin-footer">See You Around · Private production office · Recruitment availability depends on the global switch and published roles.</footer></body></html>

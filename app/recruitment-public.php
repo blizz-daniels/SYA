@@ -56,5 +56,6 @@ if($action==='status'){
     $stmt=$pdo->prepare('SELECT a.reference,a.public_status,a.received_at,v.role_snapshot FROM recruitment_applications a JOIN recruitment_form_versions v ON v.role_id=a.role_id AND v.version=a.form_version WHERE a.id=?');$stmt->execute([$_SESSION['tracking_access']['id']]);$tracked=$stmt->fetch();if($tracked){$tracked['title']=json_decode($tracked['role_snapshot'],true)['title'];unset($tracked['role_snapshot']);}
     if(!$tracked){unset($_SESSION['tracking_access']);header('Location: '.r_url('track'),true,303);exit;}
 }
+$auditionSchedule=[];if($action==='status'){require_once __DIR__.'/production.php';$auditionSchedule=p_verified_schedule($pdo,(int)$_SESSION['tracking_access']['id']);}
 $title=match($action){'apply'=>'Apply for '.$role['title'],'track'=>'Track your application','received'=>'Application received','status'=>'Application status',default=>'Recruitment opportunities'};
 require dirname(__DIR__).'/resources/views/recruitment-layout.php';

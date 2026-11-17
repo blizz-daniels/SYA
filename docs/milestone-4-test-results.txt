@@ -1,0 +1,168 @@
+Milestone 4 local verification — 2026-11-17
+PHP 8.4.27 / MariaDB 11.8.6 / Apache 2.4.69 / Chromium
+Synthetic local data and captured email only; live hosting unverified.
+
+=== m4-tests ===
+PASS role/module guards, private HTTPS meeting validation, WAT/UTC conversion, panel conflicts, bounded slot generation and slot-overlap/bounds checks
+PASS slot and same-person overlap prevention across applications/panels, casting-only assignments, booked-session edit guard and CSRF
+PASS privacy-gated delivery, redacted logs, token URL cleanup, safe GET previews, private-note isolation, CSRF, expiry, confirmation and replay protection
+PASS rescheduling revokes old links/grants, private virtual details, decline, and reuse of a released slot
+PASS callback request/assignment/history, attendance timing enforcement and private attendance records
+PASS acting/crew criteria, exact weighted score, numeric validation, reviewer identity, immutable versions/revisions, duplicate/stale rejection and independent recruitment decisions
+PASS email-verified schedule access with private notes, callback records, evaluations and decisions withheld
+PASS cancellation revocation, cancellation mail queue, preserved history and no automatic final decision
+PASS rescheduling invalidates an unused, unexpired earlier invitation
+PASS controlled delivery failure/retry, unsent-token invalidation and no-JavaScript invitation preview without consuming the response
+PASS confirmation receipt accessibility
+PASS keyboard invitation response, private-page skip link and no-store/no-referrer headers
+PASS 21 production/valid-invitation viewport checks, axe scans and no browser JavaScript/console errors
+
+=== m4-races ===
+PASS simultaneous booking of one slot via two PHP processes creates exactly one active reservation.
+PASS simultaneous overlapping bookings for one email across roles/panels create exactly one reservation.
+PASS simultaneous review revisions in independent sessions preserve one revision and reject the stale write.
+
+=== m4-database ===
+PASS: Native prepared statements
+PASS: UTF-8 and SQL metacharacters remain literal
+PASS: Exactly four migrations recorded
+PASS: Only Milestone 1–4 tables exist
+
+=== m4-unit ===
+PASS WAT input converts correctly to UTC
+PASS invalid calendar date rejected
+PASS unknown time zone rejected
+PASS criterion order preserved
+PASS weighted average matches 3:1 example
+PASS score above 10 rejected
+PASS non-finite score rejected
+PASS missing criterion rejected
+PASS zero weight rejected
+PASS duplicate criteria IDs rejected
+PASS blank optional weight defaults to one
+PASS credential-bearing invitation base URL rejected
+PASS remote HTTP invitation base URL rejected
+
+=== m4-security ===
+PASS private-code rules, role defaults, HTTPS enforcement, forged proxy header rejection and secure session configuration.
+
+=== m4-migration ===
+Already applied: 001_foundation.sql
+Already applied: 002_administration.sql
+Already applied: 003_recruitment.sql
+Already applied: 004_auditions_evaluations.sql
+Database connection verified; schema version: 4
+Already applied: 001_foundation.sql
+Already applied: 002_administration.sql
+Already applied: 003_recruitment.sql
+Already applied: 004_auditions_evaluations.sql
+Database connection verified; schema version: 4
+
+=== m4-hosting ===
+PASS private URL denied: /config/config.php
+PASS private URL denied: /config/config.example.php
+PASS private URL denied: /app/bootstrap.php
+PASS private URL denied: /database/migrations/001_foundation.sql
+PASS private URL denied: /database/migrations/004_auditions_evaluations.sql
+PASS private URL denied: /database/upgrade-milestone-4.sql
+PASS private URL denied: /app/production.php
+PASS private URL denied: /resources/views/pages.php
+PASS private URL denied: /bin/migrate.php
+PASS private URL denied: /tests/browser.cjs
+PASS private URL denied: /docs/browser-results.txt
+PASS private URL denied: /storage/private/access-check.txt
+PASS private URL denied: /database/upgrade-milestone-3.sql
+PASS private URL denied: /public/setup.php.dist
+PASS private URL denied: /tools/setup-helper.html
+PASS private URL denied: /README.md
+PASS private URL denied: /AGENTS.md
+PASS private URL denied: /.git/config
+PASS private URL denied: /.htaccess
+PASS private URL denied: /public/.htaccess
+PASS root redirect preserves page selection
+PASS public page: home
+PASS public page: about
+PASS public page: characters
+PASS public page: casting
+PASS public page: crew
+PASS public page: updates
+PASS public page: media
+PASS public page: contact
+PASS root landing page and public assets
+PASS shared-root PHP execution: private production portal
+PASS shared-root PHP execution: anonymous invitation fallback
+
+=== m4-admin-regression ===
+PASS first setup, bad token, weak code, CSRF, permanent replay lock and setup-file removal gate
+PASS generic login failures, login CSRF, SQL metacharacters, session rotation and HttpOnly/SameSite cookie
+PASS CSV header, empty file, 64 KiB limit and 100-row limit reject without creating accounts
+PASS account creation and CSV valid rows, duplicate usernames, invalid roles, weak codes, malformed rows and secret-free reports
+PASS settings validation, CSRF and stored text escaping
+PASS complete role/module permission matrix, direct unauthorized writes, account disable and active-session revocation
+PASS inactivity and eight-hour absolute timeout
+PASS restored setup rejected, private-code change, password hashes and no plaintext secrets in database
+PASS persistent login throttling across sessions
+PASS 15 administrator viewport/module combinations, axe scans, keyboard skip link, logout and no JavaScript exceptions
+PASS setup remains permanently closed after all Super Admin accounts are deleted
+
+=== m4-recruitment-regression ===
+PASS department-scoped role creation/publication and denied editor/cross-department operations
+PASS public role listing, CSRF, adult eligibility, option validation, MIME/size checks, randomized private storage and authorized-only attachment downloads
+PASS reusable templates, duplicate review flags without rejection, immutable form/role snapshots and stale-form rejection
+PASS tracking access expires independently of its one-time verification code
+PASS persistent five-code-attempt lock and tracking request throttling
+PASS email/reference verification, generic requests, invalid/expired/replayed code rejection, restricted status and no private-data leaks
+PASS fail-closed global recruitment, privacy, private-storage and email readiness gates
+PASS Super Admin final selection, selected-record retention separation, protected decisions and no automatic actor reveal
+PASS 21 recruitment page/viewport checks and axe scans
+PASS role closure, deadline enforcement, retention review dates and no applicant JavaScript exceptions
+
+=== m4-editor-regression ===
+PASS keyboard-focused JS question addition, unique IDs, actual draft save and three no-JavaScript fallback rows.
+
+=== m4-settings-regression ===
+PASS private email-test control, delivery log view, global recruitment switch and mobile settings axe scan.
+
+=== m4-public-regression ===
+home 320px: PASS
+about 320px: PASS
+characters 320px: PASS
+casting 320px: PASS
+crew 320px: PASS
+updates 320px: PASS
+media 320px: PASS
+contact 320px: PASS
+home 360px: PASS
+about 360px: PASS
+characters 360px: PASS
+casting 360px: PASS
+crew 360px: PASS
+updates 360px: PASS
+media 360px: PASS
+contact 360px: PASS
+home 768px: PASS
+about 768px: PASS
+characters 768px: PASS
+casting 768px: PASS
+crew 768px: PASS
+updates 768px: PASS
+media 768px: PASS
+contact 768px: PASS
+home 1440px: PASS
+about 1440px: PASS
+characters 1440px: PASS
+casting 1440px: PASS
+crew 1440px: PASS
+updates 1440px: PASS
+media 1440px: PASS
+contact 1440px: PASS
+Keyboard skip link, menu, Escape and navigation: PASS
+No-JavaScript mobile navigation: PASS
+Protected file paths, invalid routes, escaped input, POST rejection, security headers: PASS
+Browser JavaScript/console errors: NONE
+
+PHP lint: 52 files, all without syntax errors.
+JavaScript syntax: both new browser suites parse.
+Independent repeated phone SQL upgrade: 23 tables, 4 versions, original setup timestamp 2026-11-17 12:00:00 and receipt/legacy_fixture delivery preserved.
+Migration 004 SHA-256: 44cee4ce44076214abf7a7ae8d75c1d1c573f48f23a1de56081af78c3eacfe68 (phone ledger matches).
+Expected protected-log warning: deliberately unwritable local mail-capture directory during delivery-failure test; booking preserved and retry passed.
