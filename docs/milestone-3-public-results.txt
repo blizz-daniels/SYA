@@ -1,0 +1,36 @@
+home 320px: PASS
+about 320px: PASS
+characters 320px: PASS
+casting 320px: PASS
+crew 320px: PASS
+updates 320px: PASS
+media 320px: PASS
+contact 320px: PASS
+home 360px: PASS
+about 360px: PASS
+characters 360px: PASS
+casting 360px: PASS
+crew 360px: PASS
+updates 360px: PASS
+media 360px: PASS
+contact 360px: PASS
+home 768px: PASS
+about 768px: PASS
+characters 768px: PASS
+casting 768px: PASS
+crew 768px: PASS
+updates 768px: PASS
+media 768px: PASS
+contact 768px: PASS
+home 1440px: PASS
+about 1440px: PASS
+characters 1440px: PASS
+casting 1440px: PASS
+crew 1440px: PASS
+updates 1440px: PASS
+media 1440px: PASS
+contact 1440px: PASS
+Keyboard skip link, menu, Escape and navigation: PASS
+No-JavaScript mobile navigation: PASS
+Protected file paths, invalid routes, escaped input, POST rejection, security headers: PASS
+Browser JavaScript/console errors: NONE

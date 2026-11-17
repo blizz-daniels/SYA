@@ -1,5 +1,10 @@
 /config/config.php
-/storage/
+/storage/*
+!/storage/.htaccess
+!/storage/private/
+/storage/private/*
+!/storage/private/.htaccess
+!/storage/private/access-check.txt
 *.log
 .env
 /tests/artifacts/

@@ -56,7 +56,7 @@ function db(sql){return execFileSync(php,['tests/admin-db.php',sql],{encoding:'u
   results.push('PASS account creation and CSV valid rows, duplicate usernames, invalid roles, weak codes, malformed rows and secret-free reports');
   // Escaped internal settings; changes require own private code and CSRF.
   response=await context.request.post(base+'/admin.php?module=settings',{form:{csrf,action:'settings',idle_seconds:'300',admin_notice:'<script>alert(1)</script>',confirm_code:fixture.super}});assert((await response.text()).includes('Administrator settings saved'));
-  await page.goto(base+'/admin.php');assert(await page.getByText('<script>alert(1)</script>',{exact:true}).isVisible());assert.equal(await page.locator('script').count(),0);
+  await page.goto(base+'/admin.php');assert(await page.getByText('<script>alert(1)</script>',{exact:true}).isVisible());assert.equal(await page.locator('script:not([src])').count(),0);
   response=await context.request.post(base+'/admin.php?module=settings',{form:{csrf:'bad',action:'settings',idle_seconds:'3600',confirm_code:fixture.super}});assert.equal(response.status(),403);
   assert.equal(db("SELECT setting_value FROM admin_settings WHERE setting_key='idle_seconds'"),'300');
   results.push('PASS settings validation, CSRF and stored text escaping');

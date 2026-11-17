@@ -8,5 +8,5 @@ $stmt = $pdo->prepare('SELECT ? AS value');
 $value = "Isioma & Ayo — Ọrẹ́ '; DROP TABLE schema_migrations; --";
 $stmt->execute([$value]);
 check($stmt->fetchColumn() === $value, 'UTF-8 and SQL metacharacters remain literal');
-check((int)$pdo->query('SELECT COUNT(*) FROM schema_migrations')->fetchColumn() === 2, 'Exactly two migrations recorded');
-check($pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN) === ['admin_settings', 'administrators', 'audit_log', 'auth_rate_limits', 'schema_migrations', 'system_state'], 'Only Milestone 1 and 2 tables exist');
+check((int)$pdo->query('SELECT COUNT(*) FROM schema_migrations')->fetchColumn() === 3, 'Exactly three migrations recorded');
+check($pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN) === ['admin_settings', 'administrators', 'audit_log', 'auth_rate_limits', 'recruitment_applications', 'recruitment_attachments', 'recruitment_delivery_log', 'recruitment_events', 'recruitment_form_templates', 'recruitment_form_versions', 'recruitment_roles', 'recruitment_tracking_challenges', 'schema_migrations', 'system_state'], 'Only Milestone 1–3 tables exist');

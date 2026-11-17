@@ -1,0 +1,11 @@
+PASS first setup, bad token, weak code, CSRF, permanent replay lock and setup-file removal gate
+PASS generic login failures, login CSRF, SQL metacharacters, session rotation and HttpOnly/SameSite cookie
+PASS CSV header, empty file, 64 KiB limit and 100-row limit reject without creating accounts
+PASS account creation and CSV valid rows, duplicate usernames, invalid roles, weak codes, malformed rows and secret-free reports
+PASS settings validation, CSRF and stored text escaping
+PASS complete role/module permission matrix, direct unauthorized writes, account disable and active-session revocation
+PASS inactivity and eight-hour absolute timeout
+PASS restored setup rejected, private-code change, password hashes and no plaintext secrets in database
+PASS persistent login throttling across sessions
+PASS 15 administrator viewport/module combinations, axe scans, keyboard skip link, logout and no JavaScript exceptions
+PASS setup remains permanently closed after all Super Admin accounts are deleted

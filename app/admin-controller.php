@@ -40,7 +40,9 @@ if ($method === 'POST') {
         if (!in_array($module, admin_modules($user['role']), true)) { http_response_code(403); throw new DomainException('You do not have permission to access this module.'); }
         if ($action === 'logout') { audit($pdo, (int)$user['id'], 'logout'); end_admin_session(); admin_redirect('login'); }
         try {
-            if ($action === 'import' && $module === 'administration') { $flash = import_administrators($pdo, $user); }
+            if (in_array($module, ['casting','crew'], true)) { $flash=r_admin_action($pdo,$user,$module,$action); }
+            elseif ($module==='settings' && in_array($action,['recruitment_toggle','recruitment_mail_test'],true)) { $flash=r_global_action($pdo,$user,$action); }
+            elseif ($action === 'import' && $module === 'administration') { $flash = import_administrators($pdo, $user); }
             elseif ($action === 'create' && $module === 'administration') {
                 require_super($user); confirmation($pdo, $user); $pdo->beginTransaction();
                 try { $pdo->query('SELECT id FROM system_state WHERE id = 1 FOR UPDATE')->fetch(); add_administrator($pdo, strtolower(trim(field('username'))), field('new_private_code'), field('role'), (int)$user['id']); $pdo->commit(); }
@@ -65,5 +67,6 @@ if ($method === 'POST') {
 if (!$user && $module !== 'login') { admin_redirect('login'); }
 if ($user && $module === 'login') { admin_redirect(); }
 if ($user && !in_array($module, admin_modules($user['role']), true)) { http_response_code(403); throw new DomainException('You do not have permission to access this module.'); }
+if($user && in_array($module,['casting','crew'],true)){r_admin_guard($pdo,$user,$module);}
 $title = $module === 'login' ? 'Administrator sign in' : ADMIN_MODULES[$module];
 require dirname(__DIR__) . '/resources/views/admin-layout.php';

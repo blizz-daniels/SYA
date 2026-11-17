@@ -7,7 +7,7 @@ base = sys.argv[1].rstrip('/')
 for path in ['/config/config.php', '/config/config.example.php', '/app/bootstrap.php',
              '/database/migrations/001_foundation.sql', '/resources/views/pages.php',
              '/bin/migrate.php', '/tests/browser.cjs', '/docs/browser-results.txt',
-             '/public/setup.php.dist', '/tools/setup-helper.html', '/README.md', '/AGENTS.md', '/.git/config', '/.htaccess', '/public/.htaccess']:
+             '/storage/private/access-check.txt', '/database/upgrade-milestone-3.sql', '/public/setup.php.dist', '/tools/setup-helper.html', '/README.md', '/AGENTS.md', '/.git/config', '/.htaccess', '/public/.htaccess']:
     try:
         response = urllib.request.urlopen(base + path)
         code = response.status

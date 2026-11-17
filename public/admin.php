@@ -6,5 +6,7 @@ if ($config['base_url'] === '' && preg_match('~^/(?:[A-Za-z0-9_-]+/)*public/admi
 }
 require dirname(__DIR__) . '/app/admin-security.php';
 require dirname(__DIR__) . '/app/admin-actions.php';
+require dirname(__DIR__) . '/app/recruitment.php';
+require dirname(__DIR__) . '/app/recruitment-admin.php';
 try { require dirname(__DIR__) . '/app/admin-controller.php'; }
 catch (Throwable $error) { admin_failure($error); }

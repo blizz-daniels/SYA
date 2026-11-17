@@ -1,0 +1,1 @@
+See You Around private storage protection test. This public URL must return 403, never this text.

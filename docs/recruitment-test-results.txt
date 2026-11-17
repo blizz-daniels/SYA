@@ -1,0 +1,12 @@
+PASS department-scoped role creation/publication and denied editor/cross-department operations
+PASS public role listing, CSRF, adult eligibility, option validation, MIME/size checks, randomized private storage and authorized-only attachment downloads
+PASS reusable templates, duplicate review flags without rejection, immutable form/role snapshots and stale-form rejection
+PASS tracking access expires independently of its one-time verification code
+PASS persistent five-code-attempt lock and tracking request throttling
+PASS email/reference verification, generic requests, invalid/expired/replayed code rejection, restricted status and no private-data leaks
+PASS fail-closed global recruitment, privacy, private-storage and email readiness gates
+PASS Super Admin final selection, selected-record retention separation, protected decisions and no automatic actor reveal
+PASS 21 recruitment page/viewport checks and axe scans
+PASS role closure, deadline enforcement, retention review dates and no applicant JavaScript exceptions
+PASS keyboard-focused JS question addition, unique IDs, actual draft save and three no-JavaScript fallback rows.
+PASS private email-test control, delivery log view, global recruitment switch and mobile settings axe scan.
