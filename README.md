@@ -88,8 +88,19 @@ Additional checks can be run with `node tests/extra.cjs` using the same developm
 
 See [actual results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
-## Hosting and limitations
+## Phone upload to InfinityFree
 
-No deployment has been performed. A conventional host should point its document root to `public/`, leaving all other files outside it. InfinityFree document-root layout, protected storage and CLI availability require account-level confirmation. Do not upload the entire repository into `htdocs`. Do not expose a browser migration runner to compensate for missing CLI; manual SQL import with checksum registration is described in the hosting report.
+Download the latest ZIP: https://github.com/blizz-daniels/SYA/archive/refs/heads/main.zip
 
-No personal data is collected. No external requests, cookies, sessions, videos, tracking scripts or social widgets are initiated by this application. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 2–7 require separate explicit authorization.
+1. Extract `SYA-main.zip` on your phone.
+2. Open `SYA-main`. Upload its **contents** into your domain's `htdocs` directory. The new root `index.php` must be directly inside `htdocs`, with `public`, `app`, `config`, and `resources` alongside it.
+3. Include the root `.htaccess`, `public/.htaccess`, and the `.htaccess` files inside private folders. Enable hidden-file display in your phone's file manager if needed. Do not delete a provider-required file outside this project.
+4. Remove or rename the provider's default `index.html` if it takes precedence over `index.php`.
+5. Open your domain. The root index redirects to `public/index.php`; the application detects that base path automatically when `base_url` is empty. No database configuration is needed to preview these public pages.
+6. Confirm `/config/config.example.php`, `/database/migrations/001_foundation.sql`, `/README.md`, and `/.git/config` return **403 Forbidden**, with no file contents. If they do not, remove the upload and stop; the hosting server is not applying the required protection rules.
+
+This whole-project layout was tested with local Apache 2.4, not an InfinityFree account. It depends on working `.htaccess` rules. A configurable document root pointing directly at `public/` remains preferable when available. A PHP built-in server does **not** apply `.htaccess`: continue using `-t public` for local development, and never expose the repository root with that server.
+
+On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
+
+No deployment has been performed. No personal data is collected. No external requests, cookies, sessions, videos, tracking scripts or social widgets are initiated by this application. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 2–7 require separate explicit authorization.

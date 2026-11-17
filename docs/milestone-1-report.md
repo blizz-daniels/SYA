@@ -101,3 +101,9 @@ In this running workspace PHP is available through the temporary `/tmp/php` wrap
 The configuration, PDO connection, versioned migration runner, shared layout and route allowlist provide a simple foundation for administration. No speculative future tables or authentication stubs were added. Milestone 2 must add its own secure setup lock, username/private-code authentication, session enforcement, rate limits, CSRF, roles and audit schema. InfinityFree TLS, sessions, protected layout and DB privileges need account verification before administrative deployment.
 
 **Stopped after Milestone 1. Milestones 2–7 have not been implemented and require explicit approval.**
+
+## Shared-hosting entry point update
+
+At the owner's request, a root `index.php` now redirects to `public/index.php` and preserves a string page selection. The public entry point detects its `/public` base path when no explicit base URL is configured. Root `.htaccess` permits only the redirect and public files; private folders also contain independent deny rules. Phone upload instructions are in README.
+
+Verification executed on 2026-11-17: PHP syntax checks passed for both entry points; `python tests/hosting.py http://127.0.0.1:8093` passed against Apache 2.4.69 using a local PHP 8.4.27 backend. All eight pages rendered, the page-preserving 302 redirect worked, public assets loaded, and 13 private URLs returned 403. This verifies the local Apache rules, not InfinityFree account behavior. InfinityFree access tests remain required after upload. No database schema or future milestone features changed.

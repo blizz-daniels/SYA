@@ -25,7 +25,7 @@ Local PHP 8.4.27 and MariaDB 11.8.6 passed application tests. This is compatibil
 
 Preferred: upload only `public/` contents into the assigned `htdocs` and place `app`, `config`, and `resources` in a protected sibling directory with the same relative layout. Confirm the provider permits and preserves this layout. `index.php` expects its parent directory to contain these folders. Never place secrets, database dumps or future attachments in the public directory. `.htaccess` disables listing and dotfile access, but is not a substitute for a correct document root.
 
-If the host cannot preserve the layout safely, **stop before deployment**. A private directory within htdocs would require verified server deny rules and direct HTTP access tests before approval; it is not an implemented or proven solution. A conventional PHP host with a configurable document root is the simpler alternative. Pricing must be obtained from the chosen provider; no price has been verified.
+A root redirect upload option has now been added at the owner’s request: upload the project contents with all `.htaccess` files. The root rules allow only `index.php` and `public/`, and private folders also deny requests independently. Empty base URL configuration automatically supports `/public`. Local Apache tests verify these rules; InfinityFree account behavior is still unverified. Before using that layout on InfinityFree, directly request private file URLs and confirm 403 with no file contents. If the provider does not enforce those rules, remove the upload and **stop before deployment**. A conventional PHP host with a configurable document root is the simpler alternative. Pricing must be obtained from the chosen provider; no price has been verified.
 
 ## Migrations without hosted CLI
 

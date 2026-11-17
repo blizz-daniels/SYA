@@ -1,6 +1,13 @@
 <?php
 declare(strict_types=1);
 require dirname(__DIR__) . '/app/bootstrap.php';
+// Support the root redirect layout without requiring a hosting-specific base URL.
+if ($config['base_url'] === '') {
+    $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    if (preg_match('~^/(?:[A-Za-z0-9_-]+/)*public/index\.php$~D', $script)) {
+        $config['base_url'] = dirname($script);
+    }
+}
 header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'");
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');

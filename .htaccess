@@ -1,0 +1,8 @@
+# Whole-project upload compatibility. Keep this hidden file when uploading.
+Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+# Only the root redirect and the public directory may be requested.
+RewriteRule ^(?:index\.php)?$ - [L]
+RewriteRule ^public(?:/|$) - [L]
+RewriteRule . - [F,L]
