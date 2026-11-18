@@ -32,7 +32,7 @@ function c_validate(PDO $pdo,string $kind,string $slug):array{
  $character=['reveal'=>field('reveal')==='1','actor_name'=>c_text(field('actor_name'),180),'actor_bio'=>c_text(field('actor_bio'),6000),'portrait_id'=>c_id(field('portrait_id')),'portrait_alt'=>c_text(field('portrait_alt'),250),'announcement_id'=>c_id(field('announcement_id'))];
  if($kind==='character'){
   if(in_array($slug,['isioma','ayo'],true)&&$d['title']!==ucfirst($slug)){throw new DomainException('Isioma and Ayo retain their approved character names.');}
-  if($character['portrait_id']){$stmt=$pdo->prepare('SELECT id FROM media_assets WHERE id=?');$stmt->execute([$character['portrait_id']]);if(!$stmt->fetchColumn()){throw new DomainException('Portrait image not found.');}}
+  if($character['portrait_id']){$stmt=$pdo->prepare('SELECT id FROM media_assets WHERE id=? LOCK IN SHARE MODE');$stmt->execute([$character['portrait_id']]);if(!$stmt->fetchColumn()){throw new DomainException('Portrait image not found.');}}
   if($character['announcement_id']){$stmt=$pdo->prepare("SELECT id FROM cms_items WHERE id=? AND kind='announcement'");$stmt->execute([$character['announcement_id']]);if(!$stmt->fetchColumn()){throw new DomainException('Choose an announcement record.');}}
   if($character['reveal']&&(!$character['actor_name']||!$character['actor_bio']||!$character['portrait_id']||!$character['portrait_alt']||!$character['announcement_id'])){throw new DomainException('A reveal needs actor name, approved biography, portrait/alt text and an announcement.');}
  }

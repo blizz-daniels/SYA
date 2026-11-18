@@ -1,0 +1,6 @@
+<?php
+declare(strict_types=1);
+const B_MAGIC="SYA6\x00";
+function b_key(string $pass,string $salt):string{if(strlen($pass)<24||strlen($pass)>256||count(array_unique(str_split($pass)))<12){throw new DomainException('Use a separate backup passphrase of 24–256 characters with at least 12 distinct characters. Keep it safely off-host.');}return hash_pbkdf2('sha256',$pass,$salt,600000,32,true);}
+function b_encrypt(string $plain,string $key,string $salt):string{$iv=random_bytes(12);$tag='';$aad=B_MAGIC.$salt;$cipher=openssl_encrypt($plain,'aes-256-gcm',$key,OPENSSL_RAW_DATA,$iv,$tag,$aad,16);if($cipher===false){throw new RuntimeException('Backup encryption unavailable');}return $aad.$iv.$tag.$cipher;}
+function b_decrypt(string $bytes,string $pass):string{if(strlen($bytes)<49||substr($bytes,0,5)!==B_MAGIC){throw new RuntimeException('Invalid backup container');}$salt=substr($bytes,5,16);static $keys=[];$fingerprint=hash('sha256',$salt.$pass);$key=$keys[$fingerprint]??b_key($pass,$salt);if(count($keys)<4){$keys[$fingerprint]=$key;}$plain=openssl_decrypt(substr($bytes,49),'aes-256-gcm',$key,OPENSSL_RAW_DATA,substr($bytes,21,12),substr($bytes,33,16),substr($bytes,0,21));if($plain===false){throw new RuntimeException('Wrong passphrase or corrupted/tampered backup');}return $plain;}

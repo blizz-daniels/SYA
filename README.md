@@ -1,10 +1,14 @@
-# See You Around — Milestones 1–5
+# See You Around — Milestones 1–6
 
-Lightweight PHP public website. Milestones 1–5 are implemented: the public website, production-office security, casting/crew recruitment, auditions/evaluations, and the content/media/reveal studio. Recruitment defaults closed until the deployment’s privacy, private-storage and Resend delivery checks are satisfied. Newsletters, the contact inbox, retention/deletion and automated backup tools remain later milestones. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
+Lightweight PHP public website. Milestones 1–6 are implemented: the public website, production-office security, casting/crew recruitment, auditions/evaluations, the content/media/reveal studio, and communications/privacy/encrypted backups. Recruitment defaults closed until the deployment’s privacy, private-storage and Resend delivery checks are satisfied. Milestone 7 final launch/integration remains. Newsletters/contact default closed until their reviewed notices and host checks are configured. Backup preparation, custody and retention cleanup are explicit staff actions; no background worker runs. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
 
 ## Requirements
 
-PHP 8.2+ (tested: 8.4.27), Ctype, PDO and pdo_mysql, native sessions, Fileinfo for attachments, GD for private image optimization, and OpenSSL/HTTPS transport (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+PHP 8.2+ (tested: 8.4.27), Ctype, PDO and pdo_mysql, native sessions, Fileinfo for attachments, GD for private image optimization, and OpenSSL/HTTPS transport with AES-256-GCM for backups (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+
+## Communications, privacy and backups upgrade (Milestone 6)
+
+Follow [the Milestone 6 phone guide](docs/milestone-6-setup.md): back up, import `database/upgrade-milestone-6.sql` into your existing Milestone 5 database, replace supplied code and preserve live config/key/storage. Add the new safe communications/backups settings instead of replacing your whole config. Reuse existing Resend credentials. See [privacy procedures](docs/privacy-operations.md), [encrypted recovery](docs/recovery.md) and [actual results](docs/milestone-6-report.md). M6 hosted checks and a real off-host custody/restore procedure remain owner responsibilities.
 
 ## Content, media and reveals upgrade (Milestone 5)
 
@@ -76,7 +80,7 @@ php bin/migrate.php
 php tests/database.php
 ```
 
-The runner applies all migration files in order; subsequent executions skip applied files after checking their checksums. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the 29-table Milestone 5 schema and five migration records.
+The runner applies all migration files in order; subsequent executions skip applied files after checking their checksums. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the 43-table Milestone 6 schema and six migration records.
 
 ## Configuration
 
@@ -93,7 +97,10 @@ The runner applies all migration files in order; subsequent executions skip appl
 - `app/content*.php`, `public/content.php`: lightweight content workflow and private studio.
 - `public/media.php`: authorization-checked optimized image serving; protected storage holds image variants.
 - `bin/migrate.php`: CLI-only migrations.
-- `tests/`: database and optional browser checks.
+- `app/communications.php`, `privacy.php`, `backups.php`: bounded operations and server-side guards.
+- `public/connect.php`, `operations.php`: public forms and authenticated operations.
+- `bin/restore-backup.php`: authenticated offline extraction into a new protected directory; never a public restore endpoint.
+- `tests/`: database, workflow, crypto/restore and optional browser checks.
 - `docs/`: hosting feasibility and actual milestone report.
 
 ## Verification
@@ -104,7 +111,7 @@ For browser verification, install development-only packages in a separate tempor
 
 Additional checks can be run with `node tests/extra.cjs` using the same development environment.
 
-See [Milestone 5 results](docs/milestone-5-report.md), [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
+See [Milestone 6 results](docs/milestone-6-report.md), [Milestone 5 results](docs/milestone-5-report.md), [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
 ## Phone upload to InfinityFree
 
@@ -121,4 +128,4 @@ This whole-project layout was tested with local Apache 2.4, not an InfinityFree 
 
 On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
 
-No deployment has been performed by the assistant. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 6–7 require separate explicit authorization.
+No deployment has been performed by the assistant. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Retention/anonymization and encrypted backup tools are implemented; final legal settings, off-host custody, host compatibility and launch verification remain operational responsibilities. No official film assets or contact details were supplied. Milestone 7 requires separate explicit authorization.

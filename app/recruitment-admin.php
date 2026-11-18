@@ -58,7 +58,7 @@ function r_admin_action(PDO $pdo,array $user,string $kind,string $action): array
         $pdo->beginTransaction();try{
         $stmt=$pdo->prepare('SELECT a.*,r.kind,r.closed_at,r.deadline,v.role_snapshot FROM recruitment_applications a JOIN recruitment_roles r ON r.id=a.role_id JOIN recruitment_form_versions v ON v.role_id=a.role_id AND v.version=a.form_version WHERE a.id=? FOR UPDATE');$stmt->execute([(int)field('application_id')]);$application=$stmt->fetch();
         if(!$application||$application['kind']!==$kind){http_response_code(403);throw new DomainException('Application is not available in your department.');}
-        $status=field('public_status');$outcome=field('outcome');$note=r_text(field('private_note'),4000,false);
+        r_not_removed($pdo,(int)$application['id']);$status=field('public_status');$outcome=field('outcome');$note=r_text(field('private_note'),4000,false);
         if(!in_array($status,R_STATUSES,true)||!in_array($outcome,['pending','selected','not_selected'],true)){throw new DomainException('Choose a valid recruitment status and outcome.');}
         if($outcome!==$application['outcome']&&$user['role']!=='super_admin'){http_response_code(403);throw new DomainException('Only a Super Admin can change the final selection decision.');}
         $retention=null;

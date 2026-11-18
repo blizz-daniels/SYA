@@ -14,7 +14,7 @@ function p_lock(PDO $pdo):void{$pdo->beginTransaction();$pdo->query('SELECT id F
 function p_app(PDO $pdo,array $user,string $kind,int $id,bool $lock=false):array{
     r_permission($user,$kind);$stmt=$pdo->prepare('SELECT a.*,r.kind,v.role_snapshot FROM recruitment_applications a JOIN recruitment_roles r ON r.id=a.role_id JOIN recruitment_form_versions v ON v.role_id=a.role_id AND v.version=a.form_version WHERE a.id=?'.($lock?' FOR UPDATE':''));$stmt->execute([$id]);$app=$stmt->fetch();
     if(!$app||$app['kind']!==$kind){http_response_code(404);throw new DomainException('Application not found in this department.');}
-    $app['role_title']=json_decode($app['role_snapshot'],true,512,JSON_THROW_ON_ERROR)['title'];return $app;
+    r_not_removed($pdo,(int)$app['id']);$app['role_title']=json_decode($app['role_snapshot'],true,512,JSON_THROW_ON_ERROR)['title'];return $app;
 }
 function p_session(PDO $pdo,int $id):array{$stmt=$pdo->prepare('SELECT * FROM audition_sessions WHERE id=?');$stmt->execute([$id]);$session=$stmt->fetch();if(!$session){http_response_code(404);throw new DomainException('Audition session not found.');}return $session;}
 function p_booking(PDO $pdo,int $id):array{

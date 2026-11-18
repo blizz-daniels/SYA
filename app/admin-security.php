@@ -15,7 +15,7 @@ function admin_modules(string $role): array {
         'super_admin' => array_keys(ADMIN_MODULES),
         'casting_manager' => ['overview', 'casting', 'communications', 'profile'],
         'crew_coordinator' => ['overview', 'crew', 'communications', 'profile'],
-        'content_editor' => ['overview', 'content', 'media', 'profile'],
+        'content_editor' => ['overview', 'content', 'media', 'communications', 'profile'],
         default => [],
     };
 }

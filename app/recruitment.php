@@ -68,7 +68,7 @@ function r_mail_ready(): bool {
     if (($config['email']['provider']??'')==='test') { return $config['environment']==='local' && in_array($_SERVER['REMOTE_ADDR']??'', ['127.0.0.1','::1'],true) && (bool)getenv('SYA_TEST_MAIL_DIR'); }
     return ($config['email']['provider']??'')==='resend' && !empty($config['email']['api_key']) && filter_var($config['email']['from_email']??'',FILTER_VALIDATE_EMAIL) && ($config['email']['delivery_verified']??false)===true;
 }
-function r_send(PDO $pdo, ?int $application, string $email, string $purpose, string $subject, string $text): bool {
+function r_send(PDO $pdo, ?int $application, string $email, string $purpose, string $subject, string $text, ?string $deliveryKey = null): bool {
     global $config; $ok=false; $result='not_configured';
     if (($config['email']['provider']??'')==='test' && r_mail_ready()) {
         $dir=getenv('SYA_TEST_MAIL_DIR'); if (!is_dir($dir)) { mkdir($dir,0700,true); }
@@ -76,7 +76,7 @@ function r_send(PDO $pdo, ?int $application, string $email, string $purpose, str
     } elseif (($config['email']['provider']??'')==='resend' && !empty($config['email']['api_key']) && filter_var($config['email']['from_email']??'',FILTER_VALIDATE_EMAIL)) {
         $name=str_replace(["\r","\n",'<','>','"'],'', $config['email']['from_name']??'See You Around');
         $body=json_encode(['from'=>$name.' <'.$config['email']['from_email'].'>','to'=>[$email],'subject'=>$subject,'text'=>$text],JSON_THROW_ON_ERROR);
-        $headers=['Authorization: Bearer '.$config['email']['api_key'],'Content-Type: application/json','Idempotency-Key: sya-'.$purpose.'-'.bin2hex(random_bytes(16))];
+        $headers=['Authorization: Bearer '.$config['email']['api_key'],'Content-Type: application/json','Idempotency-Key: sya-'.$purpose.'-'.($deliveryKey??bin2hex(random_bytes(16)))];
         $http=0; $response='';
         if (function_exists('curl_init')) {
             $curl=curl_init('https://api.resend.com/emails'); curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>$body,CURLOPT_HTTPHEADER=>$headers,CURLOPT_RETURNTRANSFER=>true,CURLOPT_CONNECTTIMEOUT=>4,CURLOPT_TIMEOUT=>8,CURLOPT_SSL_VERIFYPEER=>true,CURLOPT_SSL_VERIFYHOST=>2,CURLOPT_FOLLOWLOCATION=>false]);
@@ -156,3 +156,5 @@ function r_submit(PDO $pdo, int $roleId): string {
     try { r_send($pdo,$id,$email,'receipt','See You Around — application received',"Your application was received.\nReference: ".$reference."\nRole: ".$role['title']."\nTrack your application: ".r_url('track')."\nKeep this reference. Applying does not subscribe you to marketing."); } catch(Throwable $error) { error_log('SYA recruitment receipt delivery unavailable'); }
     return $reference;
 }
+
+function r_not_removed(PDO $pdo,int $id):void{$stmt=$pdo->prepare("SELECT anonymized_at FROM privacy_controls WHERE scope='application' AND subject_id=?");$stmt->execute([$id]);if($stmt->fetchColumn()){http_response_code(410);throw new DomainException('This application was anonymized and cannot be processed further.');}}

@@ -20,7 +20,7 @@
 
 <?php break; ?>
 <?php case 'connected': ?>
-<section class="connected section"><p class="eyebrow">05 / STAY CLOSE</p><h2>There’s more <em>ahead.</em></h2><p>Return here for official updates. Newsletter subscriptions and official social links are not available yet.</p><a class="text-link" href="<?= e(url('contact')) ?>">Stay connected →</a></section>
+<section class="connected section"><p class="eyebrow">05 / STAY CLOSE</p><h2>There’s more <em>ahead.</em></h2><p>Return here for official updates. <?php if(!empty($config['features']['newsletter'])):?><a class="text-link" href="<?= e(rtrim($config['base_url'],'/').'/connect.php?view=newsletter') ?>">Choose optional email updates →</a><?php else:?>Newsletter subscriptions are not accepting requests yet.<?php endif;?></p><a class="text-link" href="<?= e(url('contact')) ?>">Stay connected →</a></section>
 
 <?php break; ?>
 <?php endswitch;endforeach;?>

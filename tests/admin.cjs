@@ -64,7 +64,7 @@ function db(sql){return execFileSync(php,['tests/admin-db.php',sql],{encoding:'u
   for(const [name,role,code,allowed] of [
    ['casting01','casting_manager',fixture.casting,['overview','casting','communications','profile']],
    ['crew01','crew_coordinator',fixture.crew,['overview','crew','communications','profile']],
-   ['editor01','content_editor',fixture.editor,['overview','content','media','profile']]]){
+   ['editor01','content_editor',fixture.editor,['overview','content','media','communications','profile']]]){
    const c=await browser.newContext();const p=await c.newPage();await login(p,name,code);assert(p.url().includes('overview'));const t=await token(p);
    for(const module of ['overview','casting','crew','content','media','communications','administration','settings','audit','profile']){
     response=await c.request.get(base+'/admin.php?module='+module);assert.equal(response.status(),allowed.includes(module)?200:403,role+':'+module);
