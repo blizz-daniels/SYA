@@ -15,7 +15,7 @@ const fs=require('node:fs');
    assert.equal(await page.locator('h1').count(),1);assert.equal(await page.locator('main').count(),1);
    assert.equal(await page.locator('nav [aria-current="page"]').count(),1);
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   assert.equal(await page.locator('form').count(),0);
+   if(['updates','media'].includes(route)){for(const form of await page.locator('form').all()){assert.equal(await form.getAttribute('method'),'get');}}else{assert.equal(await page.locator('form').count(),0);}
    if(route==='home'){assert(await page.locator('h1').evaluate(e=>e.scrollWidth<=e.parentElement.clientWidth));assert.equal(await page.locator('.hero-content').evaluate(e=>getComputedStyle(e).animationName),'none');}
    assert(await page.locator('body').innerText().then(t=>!(/Warning:|Fatal error:|Notice:/.test(t))));
    for(const img of await page.locator('img').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(i=>i.decode());assert(await img.evaluate(i=>i.complete&&i.naturalWidth>0));assert(await img.getAttribute('alt'))}

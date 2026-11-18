@@ -5,7 +5,7 @@ import urllib.request
 
 base = sys.argv[1].rstrip('/')
 for path in ['/config/config.php', '/config/config.example.php', '/app/bootstrap.php',
-             '/database/migrations/001_foundation.sql', '/database/migrations/004_auditions_evaluations.sql', '/database/upgrade-milestone-4.sql', '/app/production.php', '/resources/views/pages.php',
+             '/database/migrations/001_foundation.sql', '/database/migrations/004_auditions_evaluations.sql', '/database/upgrade-milestone-4.sql', '/database/upgrade-milestone-5.sql', '/database/migrations/005_content_media.sql', '/app/content.php', '/storage/private/cms/test.jpg', '/app/production.php', '/resources/views/pages.php',
              '/bin/migrate.php', '/tests/browser.cjs', '/docs/browser-results.txt',
              '/storage/private/access-check.txt', '/database/upgrade-milestone-3.sql', '/public/setup.php.dist', '/tools/setup-helper.html', '/README.md', '/AGENTS.md', '/.git/config', '/.htaccess', '/public/.htaccess']:
     try:

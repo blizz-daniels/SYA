@@ -1,0 +1,10 @@
+const {chromium}=require('playwright');const assert=require('node:assert/strict');const fs=require('node:fs');const {execFileSync}=require('node:child_process');
+const base=process.env.TEST_URL||'http://127.0.0.1:8098',second=process.env.SECOND_TEST_URL||'http://127.0.0.1:8099',php=process.env.PHP_BINARY||'php';const fixture=JSON.parse(fs.readFileSync('tests/artifacts/production-fixture.json'));
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});const contexts=[];try{
+ const tokens=[];for(const host of [base,second]){const c=await b.newContext();contexts.push(c);const p=await c.newPage();await p.goto(base+'/admin.php?module=login');await p.locator('#username').fill('editoradmin');await p.locator('#private_code').fill(fixture.editor);await p.getByRole('button',{name:'Sign in',exact:true}).click();tokens.push(await p.locator('[name=csrf]').first().getAttribute('value'));}
+ const rows=JSON.parse(execFileSync(php,['tests/content-db.php',"SELECT * FROM cms_items WHERE slug='test-news'"],{encoding:'utf8'}));const i=rows[0];assert(i);
+ const before=JSON.parse(execFileSync(php,['tests/content-db.php','SELECT COUNT(*) AS n FROM cms_revisions WHERE item_id='+i.id],{encoding:'utf8'}))[0].n;
+ const response=await Promise.all(contexts.map((c,n)=>c.request.post((n?second:base)+'/content.php',{form:{csrf:tokens[n],action:'save',item_id:String(i.id),expected_revision:String(i.draft_revision_id),title:'TEST concurrent private draft',excerpt:'TEST concurrency',body:'TEST competing edit'}})));
+ assert.deepEqual(response.map(r=>r.status()).sort(),[200,409]);const after=JSON.parse(execFileSync(php,['tests/content-db.php','SELECT COUNT(*) AS n FROM cms_revisions WHERE item_id='+i.id],{encoding:'utf8'}))[0].n;assert.equal(Number(after),Number(before)+1);
+ console.log('PASS concurrent CMS edits across two independent PHP processes create one revision and reject the stale write; existing published revision remains separate.');
+}finally{for(const c of contexts)await c.close();await b.close();}})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,14 +1,18 @@
-# See You Around — Milestones 1–4
+# See You Around — Milestones 1–5
 
-Lightweight PHP public website. Milestones 1–4 are implemented: the public website, production-office security, casting/crew recruitment, and auditions/evaluations. Recruitment ships closed pending privacy, private-storage and Resend delivery checks. CMS, newsletters and the contact inbox remain later milestones. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
+Lightweight PHP public website. Milestones 1–5 are implemented: the public website, production-office security, casting/crew recruitment, auditions/evaluations, and the content/media/reveal studio. Recruitment defaults closed until the deployment’s privacy, private-storage and Resend delivery checks are satisfied. Newsletters, the contact inbox, retention/deletion and automated backup tools remain later milestones. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
 
 ## Requirements
 
-PHP 8.2+ (tested: 8.4.27), PDO and pdo_mysql, native sessions, Fileinfo for attachments, and OpenSSL/HTTPS transport (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+PHP 8.2+ (tested: 8.4.27), Ctype, PDO and pdo_mysql, native sessions, Fileinfo for attachments, GD for private image optimization, and OpenSSL/HTTPS transport (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+
+## Content, media and reveals upgrade (Milestone 5)
+
+Follow [the Milestone 5 phone guide](docs/milestone-5-setup.md): back up, import `database/upgrade-milestone-5.sql` into the existing Milestone 4 database and replace supplied files while preserving private configuration/key/storage. No new Resend key is required. Text uses immutable revisions and Super Admin publication approval; images stay private until approved publication, and actor reveals require a separate explicit action and published announcement. Scheduled visibility is evaluated on requests without cron. [Actual results and limitations](docs/milestone-5-report.md).
 
 ## Auditions and evaluations upgrade (Milestone 4)
 
-Use [the Milestone 4 phone upgrade guide](docs/milestone-4-setup.md). Back up, import `database/upgrade-milestone-4.sql` into the existing Milestone 3 database, and preserve your live private configuration/application key/storage while replacing application files. Reuse the existing Resend settings and configure the complete HTTPS base URL. Invitations and update/cancellation notices require individual staff sends; there is no background worker. Real recruitment remains closed pending the owner’s Nigerian privacy review. See [actual Milestone 4 results](docs/milestone-4-report.md).
+Use [the Milestone 4 phone upgrade guide](docs/milestone-4-setup.md). Back up, import `database/upgrade-milestone-4.sql` into the existing Milestone 3 database, and preserve your live private configuration/application key/storage while replacing application files. Reuse the existing Resend settings and configure the complete HTTPS base URL. Invitations and update/cancellation notices require individual staff sends; there is no background worker. The owner reports privacy review completed; preserve the actual approved notice and live launch settings. See [actual Milestone 4 results](docs/milestone-4-report.md).
 
 ## Recruitment upgrade (Milestone 3)
 
@@ -72,7 +76,7 @@ php bin/migrate.php
 php tests/database.php
 ```
 
-First execution applies `001_foundation.sql`; subsequent executions skip it after checking its checksum. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the 23-table Milestone 4 schema and four migration records.
+The runner applies all migration files in order; subsequent executions skip applied files after checking their checksums. Milestone 1 creates `schema_migrations`; Milestone 2 adds administrators, the permanent setup lock, login limits, audit events and private settings. The runner obtains a MySQL advisory lock, uses prepared ledger queries and rejects modified applied migrations. MySQL DDL implicitly commits; migrations must be restart-safe, and failures require inspection before retry. There is no automatic rollback. Back up before future schema changes. `tests/database.php` expects the 29-table Milestone 5 schema and five migration records.
 
 ## Configuration
 
@@ -85,7 +89,9 @@ First execution applies `001_foundation.sql`; subsequent executions skip it afte
 - `app/bootstrap.php`: configuration, escaping and URL helpers.
 - `app/database.php`: lazy PDO connection with native prepared statements.
 - `resources/views/`: shared layout, eight public pages and character component.
-- `database/migrations/001_foundation.sql`: schema version ledger only.
+- `database/migrations/`: version ledger and additive milestone schemas.
+- `app/content*.php`, `public/content.php`: lightweight content workflow and private studio.
+- `public/media.php`: authorization-checked optimized image serving; protected storage holds image variants.
 - `bin/migrate.php`: CLI-only migrations.
 - `tests/`: database and optional browser checks.
 - `docs/`: hosting feasibility and actual milestone report.
@@ -98,7 +104,7 @@ For browser verification, install development-only packages in a separate tempor
 
 Additional checks can be run with `node tests/extra.cjs` using the same development environment.
 
-See [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
+See [Milestone 5 results](docs/milestone-5-report.md), [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
 ## Phone upload to InfinityFree
 
@@ -115,4 +121,4 @@ This whole-project layout was tested with local Apache 2.4, not an InfinityFree 
 
 On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
 
-No deployment has been performed. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 5–7 require separate explicit authorization.
+No deployment has been performed by the assistant. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Full privacy and recruitment safeguards remain future work. No official film assets or contact details were supplied. Milestones 6–7 require separate explicit authorization.
