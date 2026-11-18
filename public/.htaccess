@@ -8,3 +8,10 @@ DirectoryIndex index.php
 <FilesMatch "(?i)\.(dist|bak|old|orig|sql|log|ini|env|swp|zip|gz|~)$">
  Require all denied
 </FilesMatch>
+
+# Optional static caching. PHP/private media keep their own no-store policy.
+<IfModule mod_headers.c>
+ <FilesMatch "\.(css|js|svg)$">
+  Header set Cache-Control "public, max-age=2592000"
+ </FilesMatch>
+</IfModule>

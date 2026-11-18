@@ -1,0 +1,42 @@
+<?php
+declare(strict_types=1);
+/** Read-only diagnostics. Never return credentials, raw config, private paths, usernames or applicant data. */
+function launch_checks(array $config,?PDO $pdo,bool $production=false,bool $web=false):array{
+ $checks=[];$add=static function(string $name,bool $ok,string $pass,string $fail)use(&$checks):void{$checks[]=['name'=>$name,'status'=>$ok?'PASS':'BLOCKED','detail'=>$ok?$pass:$fail];};
+ $add('PHP version',PHP_VERSION_ID>=80200,'Supported PHP runtime.','PHP 8.2 or later is required.');
+ foreach(['pdo_mysql','ctype','fileinfo','openssl','gd'] as $extension){$add('PHP '.$extension,extension_loaded($extension),'Extension loaded.','Required extension missing; affected functionality cannot launch.');}
+ $add('Authenticated backup cipher',function_exists('openssl_get_cipher_methods')&&in_array('aes-256-gcm',openssl_get_cipher_methods(),true),'AES-256-GCM available.','OpenSSL AES-256-GCM is unavailable.');
+ $add('Private application key',preg_match('/\A[a-f0-9]{64}\z/D',$config['security']['app_key']??'')===1,'Key format valid; preserve the existing value.','Configure a stable random 32-byte hex application key.');
+ $add('Temporary setup removed',!is_file(dirname(__DIR__).'/public/setup.php'),'Active setup file absent.','Remove public/setup.php. Do not reopen completed setup.');
+ if($production){
+  $add('Production database credentials',!empty($config['database']['host'])&&!empty($config['database']['name'])&&!empty($config['database']['username'])&&!empty($config['database']['password']),'Database credential fields configured.','Use a dedicated production database account with a nonempty password.');
+  $add('Production mode',($config['environment']??'')==='production'&&($config['debug']??false)===false,'Production mode with debug disabled.','Set environment to production and debug false.');
+  $base=$config['base_url']??'';$url=parse_url($base);$ok=is_string($base)&&filter_var($base,FILTER_VALIDATE_URL)&&($url['scheme']??'')==='https'&&!isset($url['user'])&&!isset($url['pass'])&&!isset($url['query'])&&!isset($url['fragment']);
+  $add('Canonical HTTPS URL',(bool)$ok,'Complete HTTPS base URL configured; check its spelling against the actual domain.','Set the complete HTTPS public base_url without credentials, query or fragment.');
+  $add('Secure session policy',($config['security']['https_required']??false)===true&&($config['session']['secure']??false)===true,'HTTPS and Secure-session policy enabled.','Enable HTTPS enforcement and Secure-session policy.');
+  if($web){$https=($_SERVER['HTTPS']??'')==='on'||($_SERVER['SERVER_PORT']??'')==='443';$add('Observed HTTPS request',$https,'This diagnostic request used HTTPS.','This request was not observed as HTTPS; do not trust arbitrary proxy headers.');}
+  else{$checks[]=['name'=>'Observed HTTPS request','status'=>'UNVERIFIED','detail'=>'CLI cannot verify hosted TLS, cookie delivery or directory denies.'];}
+ }
+ if(!$pdo){$checks[]=['name'=>'Database','status'=>'BLOCKED','detail'=>'Database unavailable; check protected configuration and migrations.'];return $checks;}
+ try{
+  $add('Native prepared statements',$pdo->getAttribute(PDO::ATTR_EMULATE_PREPARES)===false,'Native PDO prepares enabled.','PDO emulated prepares must be disabled.');
+  $ledger=$pdo->query('SELECT version,checksum FROM schema_migrations')->fetchAll(PDO::FETCH_KEY_PAIR);$files=glob(dirname(__DIR__).'/database/migrations/*.sql');$valid=count($ledger)===count($files);foreach($files as $file){if(!isset($ledger[basename($file)])||!hash_equals(hash('sha256',file_get_contents($file)),$ledger[basename($file)])){$valid=false;}}
+  $add('Migration checksums',$valid,'All six migrations match this release; no new schema upgrade is needed from M6.','Import missing upgrades or investigate modified migrations; never edit applied checksums to hide a mismatch.');
+  $add('Permanent setup lock',(bool)$pdo->query('SELECT setup_completed_at FROM system_state WHERE id=1')->fetchColumn(),'Initial setup remains permanently closed.','Complete first setup only on a fresh installation.');
+  $add('Active Super Admin',(int)$pdo->query("SELECT COUNT(*) FROM administrators WHERE role='super_admin' AND is_active=1")->fetchColumn()>0,'At least one active Super Admin exists.','An active Super Admin is required; do not restore the initial setup endpoint.');
+  $stmt=$pdo->query("SELECT setting_value FROM admin_settings WHERE setting_key='backup_until'");$add('No active backup pause',(int)$stmt->fetchColumn()<=time(),'No active write pause.','Finish or cancel the current backup before launch.');
+  $add('Physical deletion queue',(int)$pdo->query("SELECT COUNT(*) FROM privacy_file_deletions WHERE state<>'removed'")->fetchColumn()===0,'No unresolved attachment deletion jobs.','Process pending/failed physical deletions before recording privacy completion or backing up.');
+  $recruitment=!empty($config['features']['recruitment']);$stmt=$pdo->query("SELECT setting_value FROM admin_settings WHERE setting_key='recruitment_enabled'");$recruitment=$recruitment&&$stmt->fetchColumn()==='1';
+  $needsEmail=$recruitment||!empty($config['features']['newsletter'])||!empty($config['communications']['rights_enabled'])||!empty($config['features']['contact']);
+  if($needsEmail){$email=$config['email']??[];$ok=($email['provider']??'')==='resend'&&!empty($email['api_key'])&&filter_var($email['from_email']??'',FILTER_VALIDATE_EMAIL)&&($email['delivery_verified']??false)===true;$add('Enabled-service email configuration',(bool)$ok,'Verified Resend configuration present. Inbox placement still needs actual mailbox evidence.','Complete and verify Resend configuration before enabling the affected services.');}
+  else{$checks[]=['name'=>'Public submission switches','status'=>'PASS','detail'=>'Services may remain intentionally closed; this does not prevent publishing the permanent film website.'];}
+  if($recruitment){$r=$config['recruitment']??[];$add('Recruitment privacy settings',($r['privacy_approved']??false)===true&&trim($r['privacy_notice']??'')!==''&&(bool)filter_var($r['privacy_contact']??'',FILTER_VALIDATE_EMAIL),'Approved recruitment settings present; this is not legal certification.','Configure the actual approved recruitment notice/contact before opening applications.');}
+  $comms=!empty($config['features']['newsletter'])||!empty($config['features']['contact'])||!empty($config['communications']['rights_enabled']);
+  if($comms){$c=$config['communications']??[];$add('Communications privacy settings',($c['privacy_approved']??false)===true&&trim($c['notice']??'')!==''&&trim($c['notice_version']??'')!==''&&(bool)filter_var($c['privacy_contact']??'',FILTER_VALIDATE_EMAIL),'Approved communications settings present.','Configure the actual approved notice/version/contact before enabling communications.');}
+  $storage=$config['storage']??[];$path=$storage['private_path']??'';$real=is_string($path)&&is_dir($path)?realpath($path):false;$public=realpath(dirname(__DIR__).'/public');$safe=$real&&$public&&!str_starts_with($real.DIRECTORY_SEPARATOR,$public.DIRECTORY_SEPARATOR)&&is_writable($real)&&($storage['access_verified']??false)===true;
+  $add('Protected storage configuration',(bool)$safe,'Existing writable private storage and owner-verification flag present.','Configure writable storage outside public and verify its actual HTTP denial before marking verified.');
+  $checks[]=['name'=>'Hosted protection and delivery','status'=>'UNVERIFIED','detail'=>'Check the non-sensitive private marker in a normal browser, actual Secure/HttpOnly cookies, inbox/spam delivery and current backup restoration evidence. Flags alone cannot prove these.'];
+  $last=$pdo->query("SELECT offhost_note,restore_note FROM backup_runs WHERE state='complete' ORDER BY completed_at DESC LIMIT 1")->fetch();$checks[]=['name'=>'Backup custody evidence','status'=>$last&&$last['offhost_note']!==''&&$last['restore_note']!==''?'RECORDED':'UNVERIFIED','detail'=>$last&&$last['offhost_note']!==''&&$last['restore_note']!==''?'Operator custody/restore notes exist; verify their actual evidence and age.':'Record an actual complete off-host backup and restoration test. Local assistant tests do not prove production custody.'];
+ }catch(Throwable $e){$checks[]=['name'=>'Database checks','status'=>'BLOCKED','detail'=>'Schema or query unavailable. Check protected logs and migration files; no private values are shown.'];}
+ return $checks;
+}

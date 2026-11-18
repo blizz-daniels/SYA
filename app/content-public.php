@@ -5,7 +5,7 @@ $categoryFilter=isset($_GET['category'])&&is_string($_GET['category'])&&ctype_di
 $collectionFilter=isset($_GET['collection'])&&is_string($_GET['collection'])&&ctype_digit($_GET['collection'])?(int)$_GET['collection']:null;
 $visibleCategories=[];$visibleCollections=[];$moreUpdates=false;$moreMedia=false;
 $cmsPdo=null;$cmsUnavailable=false;$story=null;$publicUpdates=[];$publicMedia=[];$filmInfo=[];$publicCharacters=[];
-if(($config['database']['password']??'')!==''){
+if(is_file($configPath)&&!empty($config['database']['name'])&&!empty($config['database']['username'])){
  try{$cmsPdo=database($config);$cmsPdo->query('SELECT id FROM cms_items LIMIT 1');}
  catch(Throwable $error){$cmsPdo=null;$cmsUnavailable=true;error_log('SYA public content unavailable: '.get_class($error));}
 }

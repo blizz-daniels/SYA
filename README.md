@@ -1,10 +1,14 @@
-# See You Around — Milestones 1–6
+# See You Around — Milestones 1–7
 
-Lightweight PHP public website. Milestones 1–6 are implemented: the public website, production-office security, casting/crew recruitment, auditions/evaluations, the content/media/reveal studio, and communications/privacy/encrypted backups. Recruitment defaults closed until the deployment’s privacy, private-storage and Resend delivery checks are satisfied. Milestone 7 final launch/integration remains. Newsletters/contact default closed until their reviewed notices and host checks are configured. Backup preparation, custody and retention cleanup are explicit staff actions; no background worker runs. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
+Lightweight PHP public website. Milestones 1–6 provide: the public website, production-office security, casting/crew recruitment, auditions/evaluations, the content/media/reveal studio, and communications/privacy/encrypted backups. Recruitment defaults closed until the deployment’s privacy, private-storage and Resend delivery checks are satisfied. Milestone 7 adds tested integration hardening, read-only launch diagnostics and deployment/recovery instructions; final hosted upload and launch evidence remain owner-operated. Newsletters/contact default closed until their reviewed notices and host checks are configured. Backup preparation, custody and retention cleanup are explicit staff actions; no background worker runs. The illustrative hero is concept artwork, not a production still; promotional copy is provisional. Official synopsis, format, credits, actor identities and production dates await approval.
 
 ## Requirements
 
 PHP 8.2+ (tested: 8.4.27), Ctype, PDO and pdo_mysql, native sessions, Fileinfo for attachments, GD for private image optimization, and OpenSSL/HTTPS transport with AES-256-GCM for backups (cURL recommended); MySQL 8+ or MariaDB 10.6+ (tested: MariaDB 11.8.6), modern browser. No Composer, Node or external runtime dependencies for the application. PHP built-in server is for local use only.
+
+## Final integration update (Milestone 7)
+
+Follow [the phone upload guide](docs/milestone-7-setup.md) and [actual verification report](docs/milestone-7-report.md). Existing Milestone 6 installations need **no SQL import**. Preserve live configuration, application key and private files. Super Admin → Communications → Launch checks shows redacted diagnostics; unverified hosted checks still require practical evidence. For a brand-new empty database only, `database/install.sql` bundles all six migrations and checksum records.
 
 ## Communications, privacy and backups upgrade (Milestone 6)
 
@@ -111,7 +115,7 @@ For browser verification, install development-only packages in a separate tempor
 
 Additional checks can be run with `node tests/extra.cjs` using the same development environment.
 
-See [Milestone 6 results](docs/milestone-6-report.md), [Milestone 5 results](docs/milestone-5-report.md), [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
+See [Milestone 7 results](docs/milestone-7-report.md), [Milestone 6 results](docs/milestone-6-report.md), [Milestone 5 results](docs/milestone-5-report.md), [Milestone 4 results](docs/milestone-4-report.md), [Milestone 3 results](docs/milestone-3-report.md), [Milestone 2 results](docs/milestone-2-report.md), [Milestone 1 results](docs/milestone-1-report.md) and [hosting feasibility](docs/hosting-feasibility.md). Automated checks supplement manual keyboard, screen-reader, device and content review; they do not certify WCAG conformance.
 
 ## Phone upload to InfinityFree
 
@@ -128,4 +132,4 @@ This whole-project layout was tested with local Apache 2.4, not an InfinityFree 
 
 On future updates, replace the supplied application files and keep all `.htaccess` files. Preserve your private `config/config.php` and any future private storage; neither is part of the ZIP. You may omit `docs`, `tests`, `bin`, `AGENTS.md`, README and `.gitignore` from a production upload; never upload a `.git` directory, database dumps or development artifacts.
 
-No deployment has been performed by the assistant. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Retention/anonymization and encrypted backup tools are implemented; final legal settings, off-host custody, host compatibility and launch verification remain operational responsibilities. No official film assets or contact details were supplied. Milestone 7 requires separate explicit authorization.
+No deployment has been performed by the assistant. Public film pages collect no submitted personal data. The private portal processes staff usernames, password hashes, audit events and native session cookies. When deliberately enabled, recruitment collects the stated applicant data, uses private attachments and transactional email, and issues a separate applicant-session cookie. No external scripts, videos, tracking services or social widgets are used. Retention/anonymization and encrypted backup tools are implemented; final legal settings, off-host custody, host compatibility and launch verification remain operational responsibilities. No official film assets or contact details were supplied. Milestone 7 was authorized; no further milestone or automatic live recruitment/campaign launch is implied.

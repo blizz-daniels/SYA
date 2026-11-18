@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+if(PHP_SAPI!=='cli'){ini_set('display_errors','0');}
 $configPath = dirname(__DIR__) . '/config/config.php';
 // Never let a missing PHP opening tag, debug echo or parse failure print configuration secrets.
 $configBuffer=ob_get_level();ob_start();
@@ -19,6 +20,6 @@ function url(string $page = 'home'): string {
  global $config;
  return rtrim($config['base_url'], '/') . '/index.php?page=' . rawurlencode($page);
 }
-function asset(string $path): string { global $config; return rtrim($config['base_url'], '/') . '/assets/' . $path; }
+function asset(string $path): string { global $config; $file=dirname(__DIR__).'/public/assets/'.$path;return rtrim($config['base_url'], '/') . '/assets/' . $path . (is_file($file)?'?v='.(string)filemtime($file):''); }
 require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/maintenance.php';

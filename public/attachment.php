@@ -10,7 +10,7 @@ try{
     $stmt=$pdo->prepare('SELECT f.*,r.kind FROM recruitment_attachments f JOIN recruitment_applications a ON a.id=f.application_id JOIN recruitment_roles r ON r.id=a.role_id WHERE f.id=?');$stmt->execute([$id]);$file=$stmt->fetch();
     if(!$file){http_response_code(404);throw new DomainException('Attachment not found.');}r_permission($user,$file['kind']);
     if(!preg_match('/\A[a-f0-9]{64}\.bin\z/D',$file['storage_key'])){throw new RuntimeException('Invalid stored key');}
-    $path=r_storage().'/'.$file['storage_key'];if(!is_file($path)){http_response_code(404);throw new DomainException('Attachment unavailable.');}
+    $path=r_private_storage().'/'.$file['storage_key'];if(!is_file($path)){http_response_code(404);throw new DomainException('Attachment unavailable.');}
     audit($pdo,(int)$user['id'],'recruitment.attachment_download',(int)$file['application_id']);session_write_close();
     $extension=match($file['mime']){'image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','application/pdf'=>'pdf',default=>'bin'};
     header('Content-Type: application/octet-stream');header('Content-Disposition: attachment; filename="attachment-'.$id.'.'.$extension.'"');header('Content-Length: '.filesize($path));header('X-Content-Type-Options: nosniff');if($_SERVER['REQUEST_METHOD']!=='HEAD'){readfile($path);}exit;

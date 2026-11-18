@@ -41,9 +41,9 @@ function r_schema(array $rows): array {
     if(count($result)>20){throw new DomainException('Use at most 20 custom questions.');}
     usort($result,fn($a,$b)=>$a['order']<=>$b['order']); return $result;
 }
-function r_storage(): string {
+function r_private_storage(): string {
     global $config;
-    if (($config['recruitment']['uploads_enabled']??false)!==true || ($config['storage']['access_verified']??false)!==true) { throw new DomainException('Private attachment storage has not been verified.'); }
+    if (($config['storage']['access_verified']??false)!==true) { throw new DomainException('Private attachment storage has not been verified.'); }
     $path=$config['storage']['private_path'];
     if (!is_dir($path) && !mkdir($path,0700,true)) { throw new RuntimeException('Private storage unavailable'); }
     $real=realpath($path); $public=realpath(dirname(__DIR__).'/public');
@@ -52,6 +52,7 @@ function r_storage(): string {
     if ($docroot && str_starts_with($real.DIRECTORY_SEPARATOR,$docroot.DIRECTORY_SEPARATOR) && (!is_file($real.'/.htaccess') || !str_contains(file_get_contents($real.'/.htaccess'),'Require all denied'))) { throw new RuntimeException('Private directory protection missing'); }
     return $real;
 }
+function r_storage(): string {global $config;if(($config['recruitment']['uploads_enabled']??false)!==true){throw new DomainException('New application attachments are disabled.');}return r_private_storage();}
 function r_readiness(PDO $pdo, array $schema = []): array {
     global $config; $issues=[];
     if (($config['features']['recruitment']??false)!==true || setting($pdo,'recruitment_enabled','0')!=='1') { $issues[]='Recruitment is globally disabled.'; }
